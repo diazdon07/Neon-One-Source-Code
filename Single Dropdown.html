@@ -1,0 +1,67 @@
+<style>
+  .dropdown {
+      display: inline-block;
+      width:100% !important;
+    }
+    .dropdown-button {
+      padding: 10px 20px;
+      background-color: var(--color_4);
+      color: var(--color_2);
+      border: none;
+      cursor: pointer;
+      width:100% !important;
+    }
+    .dropdown-content {
+      display: none;
+      background-color: white;
+      width: 100%;
+      z-index: 1;
+    }
+    .dropdown-content a {
+      padding: 10px 15px;
+      display: block;
+      text-decoration: none;
+      color: black;
+    }
+    .dropdown-content a:hover {
+      background-color: #f1f1f1;
+    }
+    .show {
+      display: block;
+    }
+</style>
+
+  <div class="dropdown">
+    <button id="dropdownBtn" class="dropdown-button">
+    MENU
+    </button>
+    <div id="dropdownMenu" class="dropdown-content">
+    </div>
+  </div>
+
+<script>
+  const dropdownBtn = document.getElementById('dropdownBtn');
+  const dropdownMenu = document.getElementById('dropdownMenu');
+
+  dropdownBtn.addEventListener('click', function (event) {
+    dropdownMenu.classList.toggle('show');
+    event.stopPropagation(); // Prevent click from bubbling to window
+  });
+
+  // Close dropdown when clicking outside
+  window.addEventListener('click', function () {
+    if (dropdownMenu.classList.contains('show')) {
+      dropdownMenu.classList.remove('show');
+    }
+  });
+
+  dmAPI.getNavItemsAsync().then((navLinks) => {
+
+    navLinks.forEach((link) => {
+      const anchor = document.createElement("a");
+      anchor.href = link.path;
+      anchor.textContent = link.title;
+      dropdownMenu.appendChild(anchor);
+    });
+  });
+</script>
