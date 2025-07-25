@@ -1,67 +1,29 @@
+<!-- 
+Custom Mobile Menu Dropdown
+
+Goes to Dev Mode Site.css -->
 <style>
-  .dropdown {
-      display: inline-block;
-      width:100% !important;
-    }
-    .dropdown-button {
-      padding: 10px 20px;
-      background-color: var(--color_4);
-      color: var(--color_2);
-      border: none;
-      cursor: pointer;
-      width:100% !important;
-    }
-    .dropdown-content {
-      display: none;
-      background-color: white;
-      width: 100%;
-      z-index: 1;
-    }
-    .dropdown-content a {
-      padding: 10px 15px;
-      display: block;
-      text-decoration: none;
-      color: black;
-    }
-    .dropdown-content a:hover {
-      background-color: #f1f1f1;
-    }
-    .show {
-      display: block;
-    }
+.custom-menu > div > span.icon-container{
+  display: none;
+}
+.custom-menu[data-layout-type=accordion] [data-content-reference]{
+  gap: 0px !important;
+  min-height: 0px !important;
+}
 </style>
 
-  <div class="dropdown">
-    <button id="dropdownBtn" class="dropdown-button">
-    MENU
-    </button>
-    <div id="dropdownMenu" class="dropdown-content">
-    </div>
-  </div>
-
+<!-- Goes to SEO Heading Settings -->
 <script>
-  const dropdownBtn = document.getElementById('dropdownBtn');
-  const dropdownMenu = document.getElementById('dropdownMenu');
+$('div.flex-element.custom-menu').each(function () {
+  const $container = $(this);
+  const $title = $container.find('.accordion-title');
 
-  dropdownBtn.addEventListener('click', function (event) {
-    dropdownMenu.classList.toggle('show');
-    event.stopPropagation(); // Prevent click from bubbling to window
-  });
+  if ($title.length) {
+    const newElement = $('<p></p>')
+      .addClass($title.attr('class'))
+      .html($title.html());
 
-  // Close dropdown when clicking outside
-  window.addEventListener('click', function () {
-    if (dropdownMenu.classList.contains('show')) {
-      dropdownMenu.classList.remove('show');
-    }
-  });
-
-  dmAPI.getNavItemsAsync().then((navLinks) => {
-
-    navLinks.forEach((link) => {
-      const anchor = document.createElement("a");
-      anchor.href = link.path;
-      anchor.textContent = link.title;
-      dropdownMenu.appendChild(anchor);
-    });
-  });
+    $title.replaceWith(newElement);
+  }
+});
 </script>
