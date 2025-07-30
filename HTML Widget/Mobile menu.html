@@ -1,0 +1,46 @@
+
+<!-- Apply this to HTML Widget -->
+<button onclick="
+  const firstMenu = document.querySelector('.mobileMenu');
+  if (firstMenu) {
+    if (firstMenu.style.display === 'none') {
+      firstMenu.style.display = 'block';
+    } else {
+      firstMenu.style.display = 'none';
+    }
+  }
+">
+  Toggle Menu
+</button>
+
+<!-- Add This to site.css -->
+<style>
+.csMenu{
+    width: -webkit-fill-available;
+    font-size: 16px;
+    border: none;
+}
+</style>
+
+<!-- Add This script on header SEO Settings -->
+ <script>
+  // Hide .mobileMenu by default on page load
+  window.addEventListener('DOMContentLoaded', () => {
+    const menu = document.querySelector('.mobileMenu');
+    if (menu) {
+      menu.style.display = 'none';
+    }
+  });
+
+  // Hide menu when clicking outside of it
+  document.addEventListener('click', function (event) {
+    const menu = document.querySelector('.mobileMenu');
+    const isToggleButton = event.target.closest('button');
+
+    if (menu && !menu.contains(event.target) && !isToggleButton) {
+      menu.style.display = 'none';
+    }
+  });
+</script>
+
+<!-- On Navigation widget add class name "mobileMenu" -->
