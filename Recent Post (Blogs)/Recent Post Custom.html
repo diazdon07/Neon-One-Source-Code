@@ -1,0 +1,80 @@
+
+<!-- Add this to Site Css 
+ Note: don't forget to uncomment display -->
+<style>
+#dm .recentPost {
+    /*display: none;*/
+}
+#dm .recentPost .postArticle .postText h3{
+    display: contents;
+    font-size: 18px;
+    font-weight: normal;
+}
+#dm .recentPost .postArticle .postText span.authorBar{
+    font-size: 18px;
+    padding-left: 5px;
+}
+</style>
+
+<!-- Add Script Specific page for Blog Landing page -->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.recentPost').forEach(recentpost => {
+      recentpost.querySelectorAll('.postArticle').forEach(post => {
+        // Remove the postDescription
+        const description = post.querySelector('.postDescription');
+        if (description) description.remove();
+
+        // Remove link-bar inside <a>
+        const linkBar = post.querySelector('.link-bar');
+        if (linkBar) linkBar.remove();
+
+        // Clean up the authorBar: remove first two spans, keep only date
+        const authorBar = post.querySelector('.authorBar');
+        let dateSpan = null;
+
+        if (authorBar) {
+          const spans = authorBar.querySelectorAll('span');
+          if (spans[0]) spans[0].remove();
+          if (spans[1]) spans[1].remove();
+
+          const date = authorBar.querySelector('span');
+          if (date) {
+            dateSpan = date.cloneNode(true);
+            dateSpan.className = 'authorBar';
+            dateSpan.removeAttribute('style');
+          }
+
+          authorBar.remove();
+        }
+
+        // Extract title link
+        const postTitleDiv = post.querySelector('.postTitle');
+        const h3 = postTitleDiv?.querySelector('h3');
+        const link = h3?.querySelector('a');
+
+        if (postTitleDiv && h3 && link && dateSpan) {
+          const postText = post.querySelector('.postText');
+          if (!postText) return;
+
+          const newH3 = document.createElement('h3');
+          const newLink = link.cloneNode(true);
+          newH3.appendChild(newLink);
+
+          postText.innerHTML = '';
+          postText.style.fontSize = '18px';
+          postText.style.fontWeight = 'normal';
+          postText.appendChild(newH3);
+          postText.appendChild(dateSpan);
+
+          postTitleDiv.remove();
+        }
+      });
+
+      // Make .recentPost visible
+      recentpost.style.display = 'block';
+    });
+  });
+</script>
+
+<!-- Add ClassName "recentPost" on Recent Posts Widget -->
