@@ -1,0 +1,17 @@
+ul.defaultList {
+margin-left:-20px!Important;
+}
+
+ul.defaultList li{
+margin: 0;
+padding-left: 30px!important;
+list-style: none;
+background-image: url('https://irp.cdn-website.com/30365249/dms3rep/multi/noun-key-6743297-8CAF3F.svg');
+background-repeat: no-repeat;
+background-position: left top 0px;
+background-size: 25px;
+}
+
+ul.defaultList li:before{
+content:' ' !important;
+}
