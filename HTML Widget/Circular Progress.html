@@ -1,92 +1,111 @@
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+.circle-wrapper {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.circle-wrapper svg {
+    transform: rotate(-90deg);
+    width: 100%;
+    height: 100%;
+}
+.bg-ring {
+    stroke: rgb(253, 253, 253);
+    stroke-width: 17;
+    fill: none;
+}
+.progress-ring {
+    stroke: blue;
+    stroke-width: 18;
+    fill: none;
+    stroke-linecap: round;
+    stroke-dasharray: 880;  /* Circumference (2 * PI * R) */
+    stroke-dashoffset: 880;
+    /*animation: progress 0.8s ease-out forwards;*/
+}
+.circle-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: black;
+}
+.circle-content h2 {
+    margin: 10px 0;
+    font-size: 36px;
+    color: black !important;
+    font-weight: 900 !important;
 }
 
-:root {
-  --progress-bar-width: 200px;
-  --progress-bar-height: 200px;
-  --font-size: 2rem;
+.circle-content p {
+    margin: 0;
+    font-size: 16px;
+    font-weight: bold;
 }
-
-body {
-  height: 100vh;
-  background-color: #100c08;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  place-items: center;
-  gap: 2rem;
-}
-.circular-progress {
-  width: var(--progress-bar-width);
-  height: var(--progress-bar-height);
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.inner-circle {
-  position: absolute;
-  width: calc(var(--progress-bar-width) - 30px);
-  height: calc(var(--progress-bar-height) - 30px);
-  border-radius: 50%;
-  background-color: lightgrey;
-}
-
-.percentage {
-  position: relative;
-  font-size: var(--font-size);
-  color: rgb(0, 0, 0, 0.8);
-}
-
-@media screen and (max-width: 800px) {
-  :root {
-    --progress-bar-width: 150px;
-    --progress-bar-height: 150px;
-    --font-size: 1.3rem;
-  }
-}
-
-@media screen and (max-width: 500px) {
-  :root {
-    --progress-bar-width: 120px;
-    --progress-bar-height: 120px;
-    --font-size: 1rem;
-  }
+@keyframes progress {
+    to {
+      stroke-dashoffset: 0;
+    }
 }
 </style>
-<div class="circular-progress" data-inner-circle-color="lightgrey" data-percentage="80" data-progress-color="crimson" data-bg-color="black">
-  <div class="inner-circle"></div>
-  <p class="percentage">0%</p>
-</div>
+<div class="circle-wrapper">
+  <svg viewBox="0 0 300 300">
+   <circle class="bg-ring" cx="150" cy="150" r="140">
+   </circle>
+   <circle class="progress-ring" cx="150" cy="150" r="140">
+   </circle>
+  </svg>
+  <div class="circle-content">
+   <h2 class="count" data-target="11517">
+    0
+   </h2>
+   <p>
+    Guests Served
+   </p>
+  </div>
+ </div>
 <script>
-const circularProgress = document.querySelectorAll(".circular-progress");
+  function animateCounter(element, duration = 2000) {
+  let endValue = parseInt(element.getAttribute("data-target"));
+  let startTime = null;
 
-Array.from(circularProgress).forEach((progressBar) => {
-  const progressValue = progressBar.querySelector(".percentage");
-  const innerCircle = progressBar.querySelector(".inner-circle");
-  let startValue = 0,
-    endValue = Number(progressBar.getAttribute("data-percentage")),
-    speed = 50,
-    progressColor = progressBar.getAttribute("data-progress-color");
-
-  const progress = setInterval(() => {
-    startValue++;
-    progressValue.textContent = `${startValue}%`;
-    progressValue.style.color = `${progressColor}`;
-
-    innerCircle.style.backgroundColor = `${progressBar.getAttribute(
-      "data-inner-circle-color"
-    )}`;
-
-    progressBar.style.background = `conic-gradient(${progressColor} ${
-      startValue * 3.6
-    }deg,${progressBar.getAttribute("data-bg-color")} 0deg)`;
-    if (startValue === endValue) {
-      clearInterval(progress);
+  function updateCounter(currentTime) {
+    if (!startTime) startTime = currentTime;
+    let progress = Math.min((currentTime - startTime) / duration, 1);
+    let value = Math.floor(progress * endValue);
+    element.textContent = value.toLocaleString();
+    if (progress < 1) {
+      requestAnimationFrame(updateCounter);
     }
-  }, speed);
+  }
+
+  requestAnimationFrame(updateCounter);
+}
+
+// Intersection Observer
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const wrapper = entry.target;
+      const counter = wrapper.querySelector(".count");
+      const ring = wrapper.querySelector(".progress-ring");
+
+      // Trigger number counter
+      animateCounter(counter, 2000);
+
+      // Trigger circle animation
+      ring.style.transition = "stroke-dashoffset 2s ease-out";
+      ring.style.strokeDashoffset = "0";
+
+      observer.unobserve(wrapper); // run once
+    }
+  });
+}, { threshold: 0.5 });
+
+document.querySelectorAll(".circle-wrapper").forEach(wrapper => {
+  observer.observe(wrapper);
 });
 </script>
